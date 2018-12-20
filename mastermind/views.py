@@ -5,8 +5,12 @@ def index(request):
     if cookie:
         return redirect('game')
 
+    if request.method == 'POST':
+    	username = request.POST.get('username')
+    	print(username)
+    	return redirect('game')
+
     return render(request, 'index.html')
 
-# TODO create decorator - if not cookie escape
 def game(request):
     return render(request, 'game.html')
