@@ -1,16 +1,44 @@
-from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
-def index(request):
-    cookie = False
-    if cookie:
-        return redirect('game')
+from mastermind.models import Game, Move
+
+def games(request):
 
     if request.method == 'POST':
-    	username = request.POST.get('username')
-    	print(username)
-    	return redirect('game')
+        game = Game.objects.create()
+        return JsonResponse({
+            'game': game.toJSON()
+        }, status=201)
 
-    return render(request, 'index.html')
+    games = Game.objects.all().order_by('pk')
+    games = [game.toJSON() for game in games]
+    return JsonResponse({
+        'games': games
+    }, status=200)
 
-def game(request):
-    return render(request, 'game.html')
+def make_move(request, pk):
+    game = get_object_or_404(Game, pk=pk)
+
+    if request.method == 'POST':
+
+        pegs = request.POST.get('pegs')
+        code = []
+
+        for peg in pegs:
+     	    code.append(GuessPeg.objects.create(
+                position=i
+            ))
+
+        game.compute_guess(code)
+
+        return JsonResponse({
+            'move': move
+        }, status=201)
+
+    moves = list(Move.objects.filter(
+                game=game
+            ).order_by('pk').values())
+    return JsonResponse({
+        'moves': moves
+    }, status=200)

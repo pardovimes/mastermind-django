@@ -3,6 +3,6 @@ from django.urls import path
 from mastermind import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('game/', views.game, name='game'),
+    path('games/', views.games, name='games'),
+    path('games/<int:pk>/move/', views.make_move, name='make_move'),
 ]
