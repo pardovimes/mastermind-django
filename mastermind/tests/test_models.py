@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.db.utils import IntegrityError
-from mastermind.models import Game, GuessPeg, Code
+from mastermind.models import Game, GuessPeg, Code, Peg
 
 
 class GameModelTest(TestCase):
@@ -49,3 +49,11 @@ class CodeModelTest(TestCase):
     def test_compare_two_random_codes(self):
         user_code = self.game.generate_random_code()
         feedback_pegs = self.game.compute_guess(user_code)
+
+    def test_compare_two_equal_codes(self):
+        user_code = self.game.generate_random_code()
+        feedback_pegs = user_code.compare_code(user_code)
+        
+        for feedback_peg in feedback_pegs:
+        	self.assertEqual(feedback_peg.color, Peg.BLACK)
+        
