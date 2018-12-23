@@ -1,6 +1,9 @@
+import json
 import random
+
 from django.db import models
 from django.utils import timezone
+
 
 class TimeStamped(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -12,6 +15,17 @@ class TimeStamped(models.Model):
         if not self.created:
             self.created = timezone.now()
         super().save(*args, **kwargs)
+
+class JSONable(models.Model):
+
+    def toJSON(self):
+        return json.dumps(
+        	self,
+        	default=lambda o: o.__dict__, 
+            sort_keys=True)
+
+    class Meta:
+        abstract = True
 
 class Peg(models.Model):
 
@@ -87,7 +101,7 @@ class Code(models.Model):
     def __str__(self):
         return ' // '.join(str(e) for e in self.pegs.all().order_by('position'))
 
-class Game(models.Model):
+class Game(JSONable):
 
     EASY = 3
     MEDIUM = 4
@@ -100,7 +114,6 @@ class Game(models.Model):
         (INSANE, 'Insane'),
     )
 
-    username = models.CharField(max_length=50)
     difficulty = models.IntegerField(default=MEDIUM)
     secret_code = models.ForeignKey(Code, related_name='games', on_delete=models.CASCADE)
 
