@@ -140,6 +140,16 @@ class Game(JSONable):
         move.feedback.set(feedback_pegs)
         return feedback_pegs
 
+    def move_history(self):
+    	moves = (
+    		self
+    		.moves
+    		.prefetch_related('code', 'code__pegs')
+    		.order_by('pk')
+		)
+    	return moves
+
+
 class Move(TimeStamped):
 
     feedback = models.ManyToManyField(FeedbackPeg)

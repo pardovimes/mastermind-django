@@ -43,9 +43,7 @@ def make_move(request, pk):
                 'message': str(e)
             }, status=500)
 
-    moves = list(Move.objects.filter(
-                game=game
-            ).order_by('pk').values())
+    moves = list(game.move_history().values())
     return JsonResponse({
         'moves': moves
     }, status=200)

@@ -28,15 +28,33 @@ class MoveModelTest(TestCase):
         response = self.client.get(reverse('make_move', kwargs={'pk':game.pk}))
         self.assertEqual(response.status_code, 200)
 
-
-    def test_move_post(self template):
+    def test_move_post(self):
         game = Game.objects.all().first()
         response = self.client.post(reverse('make_move', kwargs={'pk':game.pk}), {
             'pegs' : ['red','red','red','red']
         })
-        kwargs = template.call_args[1]
-        context = kwargs['context']
-        print(context['feedback'])
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual('feedback' in response.json(), True)
 
-    def test_get_history(self):
-        pass
+    def test_get_history_of_game(self):
+        game = Game.objects.create()
+        self.assertEqual(0, len(game.move_history()))
+        response = self.client.post(
+    		reverse('make_move', kwargs={'pk':game.pk}), {
+            'pegs' : ['red','red','red','red']
+        })
+        self.assertEqual(1, len(game.move_history()))
+        response = self.client.post(
+    		reverse('make_move', kwargs={'pk':game.pk}), {
+            'pegs' : ['red','red','red','red']
+        })
+        self.assertEqual(2, len(game.move_history()))
+        response = self.client.post(
+    		reverse('make_move', kwargs={'pk':game.pk}), {
+            'pegs' : ['red','red','red','red']
+        })
+        self.assertEqual(3, len(game.move_history()))
+
+        response = self.client.get(reverse('make_move', kwargs={'pk':game.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual('moves' in response.json(), True)

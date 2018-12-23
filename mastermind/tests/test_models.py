@@ -20,13 +20,13 @@ class GameModelTest(TestCase):
     def test_historic_on_game(self):
         game = Game.objects.create()
         user_code = game.generate_random_code()
-        self.assertEqual(0, len(game.moves.all()))
+        self.assertEqual(0, len(game.move_history()))
         feedback_pegs = game.compute_guess(user_code)
-        self.assertEqual(1, len(game.moves.all()))
+        self.assertEqual(1, len(game.move_history()))
         feedback_pegs = game.compute_guess(user_code)
-        self.assertEqual(2, len(game.moves.all()))
+        self.assertEqual(2, len(game.move_history()))
         feedback_pegs = game.compute_guess(user_code)
-        self.assertEqual(3, len(game.moves.all()))
+        self.assertEqual(3, len(game.move_history()))
 
 class CodeModelTest(TestCase):
 
