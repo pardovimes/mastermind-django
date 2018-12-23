@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
-from mastermind.models import Game, Move
+from mastermind.models import Game, Move, GuessPeg, Code
 
 def games(request):
 
@@ -22,19 +22,26 @@ def make_move(request, pk):
 
     if request.method == 'POST':
 
-        pegs = request.POST.get('pegs')
-        code = []
+        if True:
+            pegs = request.POST.getlist('pegs')
+            code = Code.objects.create()
 
-        for peg in pegs:
-     	    code.append(GuessPeg.objects.create(
-                position=i
-            ))
+            for i, peg in enumerate(pegs):
+                 code.pegs.add(GuessPeg.objects.create(
+                    color=peg,
+                    position=i
+                ))
+            feedback_pegs = game.compute_guess(code)
+            
+            return JsonResponse({
+                'feedback': [str(feedback_peg) for feedback_peg in feedback_pegs]
+            }, status=201)
+        
 
-        game.compute_guess(code)
-
-        return JsonResponse({
-            'move': move
-        }, status=201)
+            print(e)
+            return JsonResponse({
+                'message': str(e)
+            }, status=500)
 
     moves = list(Move.objects.filter(
                 game=game
