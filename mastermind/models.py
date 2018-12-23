@@ -144,7 +144,7 @@ class Game(JSONable):
     	moves = (
     		self
     		.moves
-    		.prefetch_related('code', 'code__pegs')
+    		.prefetch_related('feedback', 'code', 'code__pegs')
     		.order_by('pk')
 		)
     	return moves
